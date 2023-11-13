@@ -4,6 +4,10 @@ import com.vaccinationdistributionsystem.Vaccination.Distribution.System.Entity.
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface VaccinationCenterRepository extends JpaRepository<VaccinationCenter, Integer> {
+
+    public List<VaccinationCenter> findByCenterName(String centerName);
 }
