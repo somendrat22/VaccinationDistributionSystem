@@ -3,6 +3,7 @@ package com.vaccinationdistributionsystem.Vaccination.Distribution.System.Servic
 import com.vaccinationdistributionsystem.Vaccination.Distribution.System.DTO.AddVaccinationCenterDTO;
 import com.vaccinationdistributionsystem.Vaccination.Distribution.System.DTO.ResposeDTO.CenterNameDoseType;
 import com.vaccinationdistributionsystem.Vaccination.Distribution.System.Entity.VaccinationCenter;
+import com.vaccinationdistributionsystem.Vaccination.Distribution.System.Exception.VaccinationCenterNotPresentException;
 import com.vaccinationdistributionsystem.Vaccination.Distribution.System.Repository.VaccinationCenterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,7 +17,7 @@ public class VaccinationCenterService {
     @Autowired
     VaccinationCenterRepository vaccinationCenterRepository;
 
-    public void createVaccinationCenter(AddVaccinationCenterDTO vaccinationCenterDetails){
+    public VaccinationCenter createVaccinationCenter(AddVaccinationCenterDTO vaccinationCenterDetails){
         VaccinationCenter obj = new VaccinationCenter();
         obj.setCenterName(vaccinationCenterDetails.getCenterName());
         obj.setCovaxinDose(vaccinationCenterDetails.getCovaxinDoses());
@@ -25,11 +26,18 @@ public class VaccinationCenterService {
         obj.setSputnikDose(vaccinationCenterDetails.getSputnikDose());
         obj.setAddress(vaccinationCenterDetails.getAddress());
         vaccinationCenterRepository.save(obj);
+        return obj;
     }
 
 
     public List<VaccinationCenter> searchByName(String centerName){
-        return vaccinationCenterRepository.findByCenterName(centerName);
+        List<VaccinationCenter>  data  = vaccinationCenterRepository.findByCenterName(centerName);
+
+        if(data.size() == 0){
+            throw new VaccinationCenterNotPresentException(String.format("Vaccination center with the name %s does not exist", centerName));
+        }
+
+        return data;
     }
 
     public VaccinationCenter getByID(int vcid){

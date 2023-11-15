@@ -11,6 +11,9 @@ import java.util.List;
 @Repository
 public interface DoctorRepository extends JpaRepository<Doctor, Integer> {
 
-    @Query(value = "select vaccination_center_vc_id, count(*)  from public.doctor group by vaccination_center_vc_id", nativeQuery = true)
+    @Query(value = "select vc.vc_id, count(*) from vaccination_center as vc Left join doctor d on vc.vc_id = d.vaccination_center_vc_id group by vc.vc_id order by count asc", nativeQuery = true)
     public List<Object []> getVaccinationCenterVsDoctorCount();
+
+    @Query(value = "select doc_id, count(*) from doctor as doc Left join Patient p on doc.doc_id = p.doctor_doc_id group by doc.doc_id order by count asc", nativeQuery = true)
+    public List<Object []> getDoctorVsPatientCount();
 }
